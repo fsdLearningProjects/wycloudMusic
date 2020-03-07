@@ -5,14 +5,30 @@ import { getSongList, getPlayList, getCurrentIndex, getPlayMode, getCurrentSong 
 import { PlayState } from 'src/app/store/reducers/player.reducer';
 import { Song } from 'src/app/services/data-types/common.types';
 import { PlayMode } from './player-types';
-import { SetCurrentIndex } from 'src/app/store/actions/player.action';
+import { SetCurrentIndex, SetPlayMode, SetPlayList } from 'src/app/store/actions/player.action';
 import { Subscription, fromEvent } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
+import { shuffle } from 'src/app/utils/array';
 
 interface PlayerSelectorState {
   type: (playState: PlayState) => Song[] | number | PlayMode | Song,
   cb: (item: Song[] | number | PlayMode | Song) => void
 }
+
+const MODE_PLAY: PlayMode[] = [
+  {
+    type: 'loop',
+    label: '循环'
+  },
+  {
+    type: 'random',
+    label: '随机'
+  },
+  {
+    type: 'singleLoop',
+    label: '单曲循环'
+  }
+];
 
 @Component({
   selector: 'app-wy-player',
@@ -46,10 +62,17 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
   volume = 60;
   // 是否显示音量面板
   showVolumePanel = false;
+  // 是否显示播放列表面板
+  showListPanel = false;
   // 是否点击的是音量面板本身
   selfClick = false;
 
   private winClick: Subscription;
+
+  // 当前播放的模式
+  currentMode: PlayMode;
+  // 点击模式图标的次数
+  modeCount = 0;
 
   constructor(private store$: Store<AppStoreModule>, @Inject(DOCUMENT) private document: Document) {
     const appStore$ = this.store$.pipe(select(createFeatureSelector<PlayState>('player')));
@@ -97,7 +120,18 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
   }
 
   private watchPlayMode(mode: PlayMode) {
-    console.log('playMode', mode);
+    this.currentMode = mode;
+    if (this.songList) {
+      let list = this.songList.slice();
+      if (mode.type === 'random') {
+        list = shuffle(this.songList);
+        // 更新下标
+        this.updateCurrentIndex(list, this.currentSong);
+        // 修改实际的播放列表
+        this.store$.dispatch(SetPlayList({ playList: list }));
+      }
+      // 注意：由于只在随机模式下更新 playlist，因此当切换过随机模式后，播放的顺序就会一直是随机模式下的顺序
+    }
   }
 
   private watchCurrentSong(song: Song) {
@@ -109,6 +143,17 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
     } else {
 
     }
+  }
+
+  // 更新当前播放歌曲的下标
+  private updateCurrentIndex(list: Song[], song: Song) {
+    const newIndex = list.findIndex(item => item.id === song.id);
+    this.store$.dispatch(SetCurrentIndex({ currentIndex: newIndex }));
+  }
+
+  // 切换模式
+  changeMode() {
+    this.store$.dispatch(SetPlayMode({ playMode: MODE_PLAY[(++this.modeCount % 3)] }));
   }
 
   onPercentChange(percent: number) {
@@ -124,14 +169,20 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
   }
 
   // 控制音量面板的显示
-  toggleVolPanel(event: MouseEvent) {
-    event.stopPropagation();
-    this.togglePanel();
+  toggleVolPanel() {
+    this.togglePanel('showVolumePanel');
+  }
+
+  // 控制播放列表面板的显示
+  toggleListPanel() {
+    if (this.songList.length) {
+      this.togglePanel('showListPanel');
+    }
   }
   
-  togglePanel() {
-    this.showVolumePanel = !this.showVolumePanel;
-    if (this.showVolumePanel) {
+  togglePanel(type: string) {
+    this[type] = !this[type];
+    if (this[type]) {
       this.bindDocumentClickListener();
     } else {
       this.unbindDocumentClickListener();
@@ -144,6 +195,7 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
         // 如果点击了播放器以外的地方
         if (!this.selfClick) {
           this.showVolumePanel = false;
+          this.showListPanel = false;
           this.unbindDocumentClickListener();
         }
         this.selfClick = false;
@@ -204,6 +256,16 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // 播放结束
+  onEnded() {
+    this.playing = false;
+    if (this.currentMode.type === 'singleLoop') {
+      this.loop();
+    } else {
+      this.onNext(this.currentIndex + 1);
+    }
+  }
+
   // 单曲循环
   private loop() {
     this.audio.currentTime = 0;
@@ -240,6 +302,11 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
 
   get picUrl(): string {
     return this.currentSong ? this.currentSong.al.picUrl : '//s4.music.126.net/style/web2/img/default/default_album.jpg';
+  }
+
+  // 改变歌曲
+  onChangeSong(song: Song) {
+    this.updateCurrentIndex(this.playList, song);
   }
 
 }
