@@ -8,7 +8,7 @@ import { PlayMode } from './player-types';
 import { SetCurrentIndex, SetPlayMode, SetPlayList } from 'src/app/store/actions/player.action';
 import { Subscription, fromEvent } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
-import { shuffle } from 'src/app/utils/array';
+import { shuffle, findIndex } from 'src/app/utils/array';
 
 interface PlayerSelectorState {
   type: (playState: PlayState) => Song[] | number | PlayMode | Song,
@@ -147,7 +147,7 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
 
   // 更新当前播放歌曲的下标
   private updateCurrentIndex(list: Song[], song: Song) {
-    const newIndex = list.findIndex(item => item.id === song.id);
+    const newIndex = findIndex(list, song);
     this.store$.dispatch(SetCurrentIndex({ currentIndex: newIndex }));
   }
 
