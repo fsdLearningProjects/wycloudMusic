@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy, ViewChild, ElementRef, AfterViewInit, Input, OnChanges, SimpleChanges, EventEmitter, Output, Inject } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy, ViewChild, ElementRef, AfterViewInit, Input, OnChanges, SimpleChanges, EventEmitter, Output, Inject, OnDestroy } from '@angular/core';
 import { Song } from 'src/app/services/data-types/common.types';
 import { WINDOW } from 'src/app/services/services.module';
 import BScroll from '@better-scroll/core';
@@ -25,7 +25,7 @@ BScroll.use(MouseWheel);
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WyScrollComponent implements OnInit, AfterViewInit, OnChanges {
+export class WyScrollComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   
   @Input() data: Song[];
   @Input() refreshDelay = 50;
@@ -42,7 +42,7 @@ export class WyScrollComponent implements OnInit, AfterViewInit, OnChanges {
       this.refreshScroll();
     }
   }
-
+  
   ngOnInit(): void {
   }
   
@@ -56,9 +56,13 @@ export class WyScrollComponent implements OnInit, AfterViewInit, OnChanges {
     });
     this.bs.on('scrollEnd', ({ y }) => this.onScrollEnd.emit(y));
   }
+  
+  ngOnDestroy(): void {
+    this.bs.destroy();
+  }
 
   private refresh() {
-    this.bs.scroller.refresh();
+    this.bs.refresh();
   }
 
   refreshScroll() {
@@ -68,7 +72,7 @@ export class WyScrollComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   scrollToElement(...args: [HTMLElement, number, boolean, boolean]) {
-    this.bs.scroller.scrollToElement.apply(this.bs, args);
+    this.bs.scroller.scrollToElement.apply(this.bs.scroller, args);
   }
 
 }

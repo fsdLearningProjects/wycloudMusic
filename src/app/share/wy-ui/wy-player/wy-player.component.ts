@@ -228,6 +228,7 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // todos: 上一曲和下一曲需要判断一下播放模式再切换
   // 上一曲
   onPrev(index: number) {
     if (!this.songReady) {
