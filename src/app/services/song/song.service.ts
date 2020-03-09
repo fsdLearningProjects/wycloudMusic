@@ -3,7 +3,7 @@ import { ServicesModule, API_URL } from '../services.module';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, Observer } from 'rxjs';
 import { map } from 'rxjs/internal/operators';
-import { SongUrl, Song } from '../data-types/common.types';
+import { SongUrl, Song, Lyric } from '../data-types/common.types';
 
 @Injectable({
   providedIn: ServicesModule
@@ -32,6 +32,18 @@ export class SongService {
       }
     });
     return result;
+  }
+
+  getSongLyric(id: number): Observable<Lyric> {
+    const params = new HttpParams().set('id', id.toString());
+    return this.http.get(this.url + 'lyric', { params }).pipe(
+      map((res: { [key: string]: { lyric: string }}) => {
+        return {
+          lyric: res.lrc.lyric,
+          tlyric: res.tlyric.lyric
+        };
+      })
+    );
   }
 
 }

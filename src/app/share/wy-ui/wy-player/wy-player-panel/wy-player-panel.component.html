@@ -42,8 +42,12 @@
                 </li>
             </ul>
         </app-wy-scroll>
-        <ul>
-            歌词
-        </ul>
+        <app-wy-scroll class="list-lyric">
+            <ul>
+                <li *ngFor="let item of currentLyric">
+                    {{ item.lyric }} <br> {{ item.tlyric }}
+                </li>
+            </ul>
+        </app-wy-scroll>
     </div>
 </div>
