@@ -1,5 +1,5 @@
 import { Lyric } from "src/app/services/data-types/common.types";
-import { zip, from, Observable, Subject } from 'rxjs';
+import { zip, from, Observable, Subject, Subscription, timer } from 'rxjs';
 import { skip } from 'rxjs/internal/operators';
 
 // [00:30:990] 分:秒.毫秒
@@ -25,13 +25,13 @@ export class WyLyric {
     // 当前播放第几行歌词
     private currentLyricNum = 0;
     private startStamp = 0;
-    private timer: number;
+    private timer$: Subscription;
     private pauseStamp: number;
 
     lines: lyricAndTimeLine[] = [];
     handlerSubject = new Subject<Handler>();
 
-    constructor(lyric: Lyric, private window: Window) {
+    constructor(lyric: Lyric) {
         this.lrc = lyric;
         this.init();
     }
@@ -117,7 +117,7 @@ export class WyLyric {
         if (this.playing) {
             this.playing = false;
         }
-        this.window.clearTimeout(this.timer);
+        this.clearTimer();
     }
     
     seek(time: number) {
@@ -142,7 +142,7 @@ export class WyLyric {
         }
 
         if (this.currentLyricNum < this.lines.length) {
-            this.window.clearTimeout(this.timer);
+            this.clearTimer();
             this.playContinue();
         }
 
@@ -151,12 +151,16 @@ export class WyLyric {
     private playContinue() {
         let line = this.lines[this.currentLyricNum];
         const delay = line.time - (Date.now() - this.startStamp);
-        this.timer = this.window.setTimeout(() => {
+        this.timer$ = timer(delay).subscribe(() => {
             this.callHandler(this.currentLyricNum++);
             if (this.currentLyricNum < this.lines.length && this.playing) {
                 this.playContinue();
             }
-        }, delay);
+        })
+    }
+
+    private clearTimer() {
+        this.timer$ && this.timer$.unsubscribe();
     }
 
     // 发射当前行歌词的索引
