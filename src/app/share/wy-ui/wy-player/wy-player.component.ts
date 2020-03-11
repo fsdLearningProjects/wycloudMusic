@@ -9,6 +9,7 @@ import { SetCurrentIndex, SetPlayMode, SetPlayList } from 'src/app/store/actions
 import { Subscription, fromEvent } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
 import { shuffle, findIndex } from 'src/app/utils/array';
+import { WyPlayerPanelComponent } from './wy-player-panel/wy-player-panel.component';
 
 interface PlayerSelectorState {
   type: (playState: PlayState) => Song[] | number | PlayMode | Song,
@@ -38,6 +39,8 @@ const MODE_PLAY: PlayMode[] = [
 export class WyPlayerComponent implements OnInit, AfterViewInit {
 
   @ViewChild('audioElement', { static: true }) private audioElement: ElementRef;
+  // 因为是有显示跟隐藏的，所以 static 为false
+  @ViewChild(WyPlayerPanelComponent, { static: false }) private playerPanel: WyPlayerPanelComponent;
 
   private audio: HTMLAudioElement;
 
@@ -158,7 +161,11 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
 
   onPercentChange(percent: number) {
     if (this.currentSong) {
-      this.audio.currentTime = this.duration * (percent / 100);
+      const currentTime = this.duration * (percent / 100)
+      this.audio.currentTime = currentTime;
+      if (this.playerPanel) {
+        this.playerPanel.seekLyric(currentTime * 1000);
+      }
     }
   }
 
@@ -271,6 +278,9 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
   private loop() {
     this.audio.currentTime = 0;
     this.play();
+    if (this.playerPanel) {
+      this.playerPanel.seekLyric(0);
+    }
   }
   
   private updateIndex(index: number) {

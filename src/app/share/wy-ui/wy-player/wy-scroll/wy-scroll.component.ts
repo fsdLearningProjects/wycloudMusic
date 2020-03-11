@@ -75,4 +75,8 @@ export class WyScrollComponent implements OnInit, AfterViewInit, OnChanges, OnDe
     this.bs.scroller.scrollToElement.apply(this.bs.scroller, args);
   }
 
+  scrollTo(...args: [number, number]) {
+    this.bs.scroller.scrollTo.apply(this.bs.scroller, args);
+  }
+
 }

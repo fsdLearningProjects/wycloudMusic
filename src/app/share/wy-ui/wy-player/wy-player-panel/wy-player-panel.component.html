@@ -42,9 +42,9 @@
                 </li>
             </ul>
         </app-wy-scroll>
-        <app-wy-scroll class="list-lyric">
+        <app-wy-scroll class="list-lyric" [data]="currentLyric">
             <ul>
-                <li *ngFor="let item of currentLyric">
+                <li *ngFor="let item of currentLyric; index as i" [class.current]="currentLyricNum === i">
                     {{ item.lyric }} <br> {{ item.tlyric }}
                 </li>
             </ul>
