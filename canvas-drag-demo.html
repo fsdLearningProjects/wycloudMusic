@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>canvas事件</title>
+    <style>
+        html, body {
+            height: 100%;
+            background: #eee;
+        }
+        canvas {
+            background: #fff;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas width="500" height="500" id="canvas"></canvas>
+    <script>
+        class Canvas {
+            blockList = []
+            ctx
+            canvas
+            nowBlock
+            createBlock (option) {
+                option.hierarchy = this.blockList.length
+                option.Canvas = this
+                this.blockList.push(new Block(option))
+                this.painting()
+            }
+            rendering (block) {
+                this.ctx.fillStyle = block.color
+                this.ctx.fillRect(block.x, block.y, block.w, block.h)
+            }
+            painting () {
+                // 清空画布
+                this.ctx.fillStyle = '#fff'
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
+                this.blockList.forEach(ele => {
+                this.rendering(ele)
+                })
+            }
+            mousedownEvent (e) {                  // 点击事件
+                const x = e.offsetX
+                const y = e.offsetY
+                // 获取点中里层级最高的色块
+                this.nowBlock = (this.blockList.filter(ele => ele.checkBoundary(x, y))).pop()
+                // 如果没有捕获的色块直接退出
+                    if (!this.nowBlock) return
+                // 将点击到的色块层级提高到最高
+                this.nowBlock.hierarchy = this.blockList.length
+                // 重新排序(从小到大)
+                this.blockList.sort((a, b) => a.hierarchy - b.hierarchy)
+                // 在重新从0开始分配层级
+                this.blockList.forEach((ele, idx) => ele.hierarchy = idx)
+                // 重新倒序排序后再重新渲染。
+                this.painting()
+                this.nowBlock.mousedownEvent(e)
+                // this.blockList.forEach(ele => {
+                //   if (ele.checkBoundary(x, y)) ele.clickEvent(e)
+                // })
+            }
+            constructor (ele) {
+                this.canvas = ele
+                this.ctx = this.canvas.getContext('2d')
+                this.blockList = []
+                // 事件绑定
+                this.canvas.addEventListener('mousedown', this.mousedownEvent.bind(this))
+            }
+        }
+        class Block {
+            w
+            h
+            x
+            y
+            color
+            Canvas
+            hierarchy
+            constructor ({ w, h, x, y, color, Canvas, hierarchy }) {
+                this.w = w
+                this.h = h
+                this.x = x
+                this.y = y
+                this.color = color
+                this.Canvas = Canvas
+                this.hierarchy = hierarchy
+            }
+            checkBoundary (x, y) {
+                return x > this.x && x < (this.x + this.w) && y > this.y && y < (this.y + this.h)
+            }
+            mousedownEvent (e) {
+                const disX = e.offsetX - this.x
+                const disY = e.offsetY - this.y
+                document.onmousemove = (mouseEvent) => {
+                this.x = mouseEvent.offsetX - disX
+                this.y = mouseEvent.offsetY - disY
+                this.Canvas.painting()
+                }
+                document.onmouseup = () => {
+                document.onmousemove = document.onmousedown = null
+                }
+                // console.log(`点击了颜色为${this.color}的色块22`)
+            }
+        }
+        let canvasVm = new Canvas(document.querySelector('canvas'));
+        canvasVm.createBlock({
+            w: 50,
+            h: 50,
+            x: 100,
+            y: 100,
+            color: 'red'
+        });
+        canvasVm.createBlock({
+            w: 50,
+            h: 50,
+            x: 130,
+            y: 130,
+            color: 'blue'
+        })
+    </script>
+</body>
+</html>
