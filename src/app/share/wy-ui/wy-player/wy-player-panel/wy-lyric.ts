@@ -1,9 +1,9 @@
-import { Lyric } from "src/app/services/data-types/common.types";
+import { Lyric } from 'src/app/services/data-types/common.types';
 import { zip, from, Observable, Subject, Subscription, timer } from 'rxjs';
 import { skip } from 'rxjs/internal/operators';
 
-// [00:30:990] 分:秒.毫秒
-const timeExp: RegExp = /\[(\d+):(\d+).(\d+)\]/
+// [00:30.990] 分:秒.毫秒
+const timeExp: RegExp = /\[(\d+):(\d+)(\.\d+)?\]/;
 
 export interface LyricLine {
     lyric: string;
@@ -19,7 +19,6 @@ export interface Handler extends LyricLine {
 }
 
 export class WyLyric {
-    
     private lrc: Lyric;
     private playing = false;
     // 当前播放第几行歌词
@@ -52,7 +51,9 @@ export class WyLyric {
     // todos: 这个方法需要优化一下
     private generateTLyric() {
         const lines = this.lrc.lyric.split('\n');
-        const tlines = this.lrc.tlyric.split('\n').filter(item => timeExp.test(item));
+        const tlines = this.lrc.tlyric
+            .split('\n')
+            .filter(item => timeExp.test(item));
         const moreLineLength = lines.length - tlines.length;
         let temp = [];
 
@@ -78,7 +79,7 @@ export class WyLyric {
         }
 
         let zipLines$: Observable<string[]>;
-        
+
         if (moreLineLength >= 0) {
             zipLines$ = zip(from(lines).pipe(skip(_skip)), from(tlines));
         } else {
@@ -95,7 +96,8 @@ export class WyLyric {
             const tlyric = tline ? tline.replace(timeExp, '').trim() : '';
             if (lyric) {
                 const millisecond = +(result[3] || '0');
-                const time = (+result[1] * 60 * 1000) + (+result[2] * 1000) + millisecond;
+                const time =
+                    +result[1] * 60 * 1000 + +result[2] * 1000 + millisecond;
                 this.lines.push({ lyric, tlyric, time });
             }
         }
@@ -105,7 +107,8 @@ export class WyLyric {
         const now = Date.now();
         this.playing = playing;
         if (this.playing) {
-            const startTime = (this.pauseStamp || now) - (this.startStamp || now);
+            const startTime =
+                (this.pauseStamp || now) - (this.startStamp || now);
             this.play(startTime, true);
         } else {
             this.stop();
@@ -119,7 +122,7 @@ export class WyLyric {
         }
         this.clearTimer();
     }
-    
+
     seek(time: number) {
         this.play(time);
     }
@@ -145,18 +148,17 @@ export class WyLyric {
             this.clearTimer();
             this.playContinue();
         }
-
     }
 
     private playContinue() {
-        let line = this.lines[this.currentLyricNum];
+        const line = this.lines[this.currentLyricNum];
         const delay = line.time - (Date.now() - this.startStamp);
         this.timer$ = timer(delay).subscribe(() => {
             this.callHandler(this.currentLyricNum++);
             if (this.currentLyricNum < this.lines.length && this.playing) {
                 this.playContinue();
             }
-        })
+        });
     }
 
     private clearTimer() {

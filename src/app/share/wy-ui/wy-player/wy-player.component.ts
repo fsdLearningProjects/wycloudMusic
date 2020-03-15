@@ -156,12 +156,12 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
             let list = this.songList.slice();
             if (mode.type === 'random') {
                 list = shuffle(this.songList);
-                // 更新下标
-                this.updateCurrentIndex(list, this.currentSong);
-                // 修改实际的播放列表
-                this.store$.dispatch(SetPlayList({ playList: list }));
             }
-            // 注意：由于只在随机模式下更新 playlist，因此当切换过随机模式后，播放的顺序就会一直是随机模式下的顺序
+            // 注意：如果只在随机模式下更新 playlist，因此当切换过随机模式后，播放的顺序就会一直是随机模式下的顺序
+            // 更新下标
+            this.updateCurrentIndex(list, this.currentSong);
+            // 修改实际的播放列表
+            this.store$.dispatch(SetPlayList({ playList: list }));
         }
     }
 
