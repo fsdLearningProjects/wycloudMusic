@@ -1,4 +1,14 @@
-<div class="m-player" (click)="selfClick = true">
+<!--
+ * @Date: 2020-03-13 19:46:21
+ * @LastEditors: fashandian
+ * @LastEditTime: 2020-03-16 01:54:32
+ -->
+<div
+    class="m-player"
+    appClickOutside
+    [bindFlag]="bindFlag"
+    (clickOutside)="onClickOutside()"
+>
     <div class="lock">
         <div class="left"><i></i></div>
     </div>
@@ -7,18 +17,26 @@
         <div class="wrap">
             <div class="btns">
                 <i class="prev" (click)="onPrev(currentIndex - 1)"></i>
-                <i class="toggle" [class.playing]="playing" (click)="onToggle()"></i>
+                <i
+                    class="toggle"
+                    [class.playing]="playing"
+                    (click)="onToggle()"
+                ></i>
                 <i class="next" (click)="onNext(currentIndex + 1)"></i>
             </div>
             <div class="head">
-                <img [src]="picUrl" [alt]="">
+                <img [src]="picUrl" [alt]="" />
                 <i class="mask"></i>
             </div>
             <div class="play">
                 <div class="words clearfix">
-                    <p class="ellipsis margin-bottom-none">{{ currentSong?.name }}</p>
+                    <p class="ellipsis margin-bottom-none">
+                        {{ currentSong?.name }}
+                    </p>
                     <ul class="songs clearfix margin-bottom-none">
-                        <li *ngFor="let item of currentSong?.ar; last as isLast">
+                        <li
+                            *ngFor="let item of currentSong?.ar; last as isLast"
+                        >
                             <a>{{ item.name }}</a>
                             <span [hidden]="isLast">/</span>
                         </li>
@@ -26,10 +44,15 @@
                 </div>
                 <div class="bar">
                     <div class="slider-wrap">
-                        <app-wy-slider [bufferOffset]="bufferPercent" [(ngModel)]="percent" (wyOnAfterChange)="onPercentChange($event)"></app-wy-slider>
+                        <app-wy-slider
+                            [bufferOffset]="bufferPercent"
+                            [(ngModel)]="percent"
+                            (wyOnAfterChange)="onPercentChange($event)"
+                        ></app-wy-slider>
                     </div>
                     <span class="time">
-                        <em>{{ currentTime | formatTime }}</em> / {{ duration | formatTime }}
+                        <em>{{ currentTime | formatTime }}</em> /
+                        {{ duration | formatTime }}
                     </span>
                 </div>
             </div>
@@ -39,12 +62,20 @@
             </div>
             <div class="ctrl">
                 <i class="volume" title="音量" (click)="toggleVolPanel()"></i>
-                <i [ngClass]="currentMode.type" [title]="currentMode.label" (click)="changeMode()"></i>
+                <i
+                    [ngClass]="currentMode.type"
+                    [title]="currentMode.label"
+                    (click)="changeMode()"
+                ></i>
                 <p class="open" (click)="toggleListPanel()">
                     <span></span>
                 </p>
                 <div class="control-vol" [hidden]="!showVolumePanel">
-                    <app-wy-slider [wyVertical]="true" [(ngModel)]="volume" (ngModelChange)="onVolumeChange($event)"></app-wy-slider>
+                    <app-wy-slider
+                        [wyVertical]="true"
+                        [(ngModel)]="volume"
+                        (ngModelChange)="onVolumeChange($event)"
+                    ></app-wy-slider>
                 </div>
             </div>
             <app-wy-player-panel
@@ -59,7 +90,8 @@
             ></app-wy-player-panel>
         </div>
     </div>
-    <audio #audioElement 
+    <audio
+        #audioElement
         [src]="currentSong?.url"
         (canplay)="onCanPlay()"
         (timeupdate)="onTimeUpdate($event)"

@@ -88,8 +88,8 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
     showVolumePanel = false;
     // 是否显示播放列表面板
     showListPanel = false;
-    // 是否点击的是音量面板本身
-    selfClick = false;
+    // 是否绑定 document click 事件
+    bindFlag = false;
 
     private winClick: Subscription;
 
@@ -198,6 +198,13 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
         }
     }
 
+    // 点击播放面板外面后触发
+    onClickOutside() {
+        this.showVolumePanel = false;
+        this.showListPanel = false;
+        this.bindFlag = false;
+    }
+
     // 控制音量
     onVolumeChange(volume: number) {
         // audio 的音量值为 0 到 1 之间
@@ -218,32 +225,7 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
 
     togglePanel(type: string) {
         this[type] = !this[type];
-        if (this[type]) {
-            this.bindDocumentClickListener();
-        } else {
-            this.unbindDocumentClickListener();
-        }
-    }
-
-    private bindDocumentClickListener() {
-        if (!this.winClick) {
-            this.winClick = fromEvent(this.document, 'click').subscribe(res => {
-                // 如果点击了播放器以外的地方
-                if (!this.selfClick) {
-                    this.showVolumePanel = false;
-                    this.showListPanel = false;
-                    this.unbindDocumentClickListener();
-                }
-                this.selfClick = false;
-            });
-        }
-    }
-
-    private unbindDocumentClickListener() {
-        if (this.winClick) {
-            this.winClick.unsubscribe();
-            this.winClick = null;
-        }
+        this.bindFlag = this[type];
     }
 
     // 播放、暂停
