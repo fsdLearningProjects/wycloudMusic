@@ -2,7 +2,7 @@ import { Lyric } from 'src/app/services/data-types/common.types';
 import { zip, from, Observable, Subject, Subscription, timer } from 'rxjs';
 import { skip } from 'rxjs/internal/operators';
 
-// [00:30.990] 分:秒.毫秒
+// [00:30.990] 分:秒.毫秒, [00:30] 分:秒
 const timeExp: RegExp = /\[(\d+):(\d+)(\.\d+)?\]/;
 
 export interface LyricLine {
@@ -10,7 +10,7 @@ export interface LyricLine {
     tlyric: string;
 }
 
-export interface lyricAndTimeLine extends LyricLine {
+export interface LyricAndTimeLine extends LyricLine {
     time: number;
 }
 
@@ -27,7 +27,7 @@ export class WyLyric {
     private timer$: Subscription;
     private pauseStamp: number;
 
-    lines: lyricAndTimeLine[] = [];
+    lines: LyricAndTimeLine[] = [];
     handlerSubject = new Subject<Handler>();
 
     constructor(lyric: Lyric) {

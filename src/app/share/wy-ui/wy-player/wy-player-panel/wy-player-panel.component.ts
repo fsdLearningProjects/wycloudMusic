@@ -15,7 +15,7 @@ import { WyScrollComponent } from '../wy-scroll/wy-scroll.component';
 import { findIndex } from 'src/app/utils/array';
 import { WINDOW } from 'src/app/services/services.module';
 import { SongService } from 'src/app/services/song/song.service';
-import { WyLyric, lyricAndTimeLine, Handler } from './wy-lyric';
+import { WyLyric, LyricAndTimeLine, Handler } from './wy-lyric';
 
 @Component({
     selector: 'app-wy-player-panel',
@@ -42,7 +42,7 @@ export class WyPlayerPanelComponent implements OnInit, OnChanges {
 
     currentIndex: number;
     scrollY = 0;
-    currentLyric: lyricAndTimeLine[];
+    currentLyric: LyricAndTimeLine[];
     currentLyricNum: number;
 
     private lyric: WyLyric;
