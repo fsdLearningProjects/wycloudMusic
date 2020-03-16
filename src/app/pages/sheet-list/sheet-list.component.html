@@ -1,0 +1,40 @@
+<!--
+ * @Date: 2020-03-16 16:03:23
+ * @LastEditors: fashandian
+ * @LastEditTime: 2020-03-16 16:55:00
+ -->
+<div class="sheet wrap feature-wrap">
+    <div class="list-r">
+        <div class="top">
+            <div class="cat">
+                <span>{{ listParams.cat }}</span>
+            </div>
+            <nz-radio-group
+                nzButtonStyle="solid"
+                [(ngModel)]="orderValue"
+                (ngModelChange)="onOrderChange($event)"
+            >
+                <label nz-radio-button nzValue="hot">热门</label>
+                <label nz-radio-button nzValue="new">最新</label>
+            </nz-radio-group>
+        </div>
+
+        <div class="list">
+            <app-single-sheet
+                class="sheet-item"
+                *ngFor="let item of sheets?.playlists"
+                [sheet]="item"
+                (onPlay)="onPlaySheet($event)"
+                (click)="goDetail(item.id)"
+            ></app-single-sheet>
+        </div>
+
+        <nz-pagination
+            class="pagination"
+            [nzPageSize]="listParams.limit"
+            [nzPageIndex]="listParams.offset"
+            [nzTotal]="sheets?.total"
+            (nzPageIndexChange)="onPageChange($event)"
+        ></nz-pagination>
+    </div>
+</div>

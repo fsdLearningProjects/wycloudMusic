@@ -1,3 +1,8 @@
+<!--
+ * @Date: 2020-03-13 19:46:21
+ * @LastEditors: fashandian
+ * @LastEditTime: 2020-03-16 17:56:16
+ -->
 <div id="app">
     <nz-layout class="layout">
         <nz-header class="header">
@@ -5,14 +10,23 @@
                 <div class="left">
                     <h1>WycloudMusic</h1>
                     <ul nz-menu nzTheme="dark" nzMode="horizontal">
-                        <li nz-menu-item>发现</li>
-                        <li nz-menu-item>歌单</li>
+                        <li
+                            nz-menu-item
+                            *ngFor="let item of menu"
+                            [routerLink]="item.path"
+                        >
+                            {{ item.label }}
+                        </li>
                     </ul>
                 </div>
                 <div class="right">
                     <div class="search">
                         <nz-input-group [nzSuffix]="suffixIconSearch">
-                            <input type="text" nz-input placeholder="歌单 / 歌手 / 歌曲">
+                            <input
+                                type="text"
+                                nz-input
+                                placeholder="歌单 / 歌手 / 歌曲"
+                            />
                         </nz-input-group>
                         <ng-template #suffixIconSearch>
                             <i nz-icon nzType="search"></i>
@@ -24,15 +38,27 @@
                                 <li nz-submenu>
                                     <div title>
                                         <span>登录</span>
-                                        <i nz-icon nzType="down" nzTheme="outline"></i>
+                                        <i
+                                            nz-icon
+                                            nzType="down"
+                                            nzTheme="outline"
+                                        ></i>
                                     </div>
                                     <ul>
                                         <li nz-menu-item>
-                                            <i nz-icon nzType="mobile" nzTheme="outline"></i>
+                                            <i
+                                                nz-icon
+                                                nzType="mobile"
+                                                nzTheme="outline"
+                                            ></i>
                                             手机登录
                                         </li>
                                         <li nz-menu-item>
-                                            <i nz-icon nzType="user-add" nzTheme="outline"></i>
+                                            <i
+                                                nz-icon
+                                                nzType="user-add"
+                                                nzTheme="outline"
+                                            ></i>
                                             注册
                                         </li>
                                     </ul>

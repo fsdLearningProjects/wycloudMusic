@@ -88,7 +88,7 @@ export class WyPlayerPanelComponent implements OnInit, OnChanges {
                     if (this.currentSong) {
                         this.scrollToCurrentSong(0);
                     }
-                    if (this.currentLyric) {
+                    if (this.currentLyric && this.lyricRefs?.length) {
                         this.scrollToCurrentLyric(0);
                     }
                 }, 100);

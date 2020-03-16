@@ -3,7 +3,7 @@ import { zip, from, Observable, Subject, Subscription, timer } from 'rxjs';
 import { skip } from 'rxjs/internal/operators';
 
 // [00:30.990] 分:秒.毫秒, [00:30] 分:秒
-const timeExp: RegExp = /\[(\d+):(\d+)(\.\d+)?\]/;
+const timeExp: RegExp = /\[(\d+):(\d+)\.?(\d+)?\]/;
 
 export interface LyricLine {
     lyric: string;
@@ -64,15 +64,15 @@ export class WyLyric {
         }
 
         const firstLyricTime = timeExp.exec(temp[1][0])[0];
-        const skipIndex = temp[0].findIndex(item => {
+        let skipIndex = temp[0].findIndex(item => {
             const exec = timeExp.exec(item);
             if (exec) {
                 return exec[0] === firstLyricTime;
             }
         });
 
-        const _skip = skipIndex === -1 ? 0 : skipIndex;
-        const skipItems = temp[0].slice(0, _skip);
+        skipIndex = skipIndex === -1 ? 0 : skipIndex;
+        const skipItems = temp[0].slice(0, skipIndex);
 
         if (skipItems.length) {
             skipItems.forEach(line => this.makeLine(line));
@@ -81,9 +81,9 @@ export class WyLyric {
         let zipLines$: Observable<string[]>;
 
         if (moreLineLength >= 0) {
-            zipLines$ = zip(from(lines).pipe(skip(_skip)), from(tlines));
+            zipLines$ = zip(from(lines).pipe(skip(skipIndex)), from(tlines));
         } else {
-            zipLines$ = zip(from(lines), from(tlines).pipe(skip(_skip)));
+            zipLines$ = zip(from(lines), from(tlines).pipe(skip(skipIndex)));
         }
 
         zipLines$.subscribe(([line, tline]) => this.makeLine(line, tline));

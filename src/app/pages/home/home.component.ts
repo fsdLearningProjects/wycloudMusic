@@ -11,7 +11,7 @@ import {
     Singer
 } from 'src/app/services/data-types/common.types';
 import { NzCarouselComponent } from 'ng-zorro-antd';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs/internal/operators';
 import { SheetService } from 'src/app/services/sheet/sheet.service';
 import { BatchActionsService } from 'src/app/store/batch-actions/batch-actions.service';
@@ -33,6 +33,7 @@ export class HomeComponent implements OnInit {
 
     constructor(
         private route: ActivatedRoute,
+        private router: Router,
         private sheetService: SheetService,
         private batchActionsService: BatchActionsService
     ) {
@@ -60,5 +61,9 @@ export class HomeComponent implements OnInit {
         this.sheetService.playSheet(id).subscribe(res => {
             this.batchActionsService.selectPlayList({ res, index: 0 });
         });
+    }
+
+    goDetail(id: number) {
+        this.router.navigate(['/sheetDetail', id]);
     }
 }
