@@ -5,16 +5,11 @@ import { skip } from 'rxjs/internal/operators';
 // [00:30.990] 分:秒.毫秒, [00:30] 分:秒
 const timeExp: RegExp = /\[(\d+):(\d+)\.?(\d+)?\]/;
 
-export interface LyricLine {
-    lyric: string;
-    tlyric: string;
-}
-
-export interface LyricAndTimeLine extends LyricLine {
+export interface LyricAndTimeLine extends Lyric {
     time: number;
 }
 
-export interface Handler extends LyricLine {
+export interface Handler extends Lyric {
     lineIndex: number; // 当前这行歌词的索引
 }
 
@@ -27,6 +22,7 @@ export class WyLyric {
     private timer$: Subscription;
     private pauseStamp: number;
 
+    // 最终生成的歌词数组
     lines: LyricAndTimeLine[] = [];
     handlerSubject = new Subject<Handler>();
 

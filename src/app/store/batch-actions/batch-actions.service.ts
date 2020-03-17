@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-14 22:16:09
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-15 00:39:57
+ * @LastEditTime: 2020-03-17 20:00:28
  */
 import { Injectable } from '@angular/core';
 import { AppStoreModule } from '../app-store.module';
@@ -11,7 +11,8 @@ import { PlayState } from '../reducers/player.reducer';
 import {
     SetSongList,
     SetPlayList,
-    SetCurrentIndex
+    SetCurrentIndex,
+    SetPlaying
 } from '../actions/player.action';
 import { shuffle, findIndex } from 'src/app/utils/array';
 
@@ -43,6 +44,47 @@ export class BatchActionsService {
         this.store$.dispatch(SetCurrentIndex({ currentIndex: playIndex }));
     }
 
+    addSheet(songs: Song[]) {
+        const songList = this.playState.songList.slice();
+        const playList = this.playState.playList.slice();
+        songs.forEach(song => {
+            const playIndex = findIndex(playList, song);
+            if (playIndex === -1) {
+                songList.push(song);
+                playList.push(song);
+            }
+        });
+        this.store$.dispatch(SetSongList({ songList }));
+        this.store$.dispatch(SetPlayList({ playList }));
+    }
+
+    // 添加歌曲
+    addSong(song: Song, isPlay = false) {
+        const songList = this.playState.songList.slice();
+        const playList = this.playState.playList.slice();
+        let index = this.playState.currentIndex;
+        const playIndex = findIndex(playList, song);
+        if (playIndex > -1) {
+            // 歌曲已经存在播放列表中
+            if (isPlay) {
+                index = playIndex;
+            }
+        } else {
+            songList.push(song);
+            playList.push(song);
+            if (isPlay) {
+                index = playList.length - 1;
+            }
+            this.store$.dispatch(SetSongList({ songList }));
+            this.store$.dispatch(SetPlayList({ playList }));
+        }
+
+        if (index !== this.playState.currentIndex) {
+            this.store$.dispatch(SetCurrentIndex({ currentIndex: index }));
+        }
+    }
+
+    // 删除歌曲
     deleteSong(song: Song) {
         const songList = this.playState.songList.slice();
         const playList = this.playState.playList.slice();
@@ -62,6 +104,7 @@ export class BatchActionsService {
         this.store$.dispatch(SetCurrentIndex({ currentIndex }));
     }
 
+    // 清空歌曲
     clearSong() {
         this.store$.dispatch(SetSongList({ songList: [] }));
         this.store$.dispatch(SetPlayList({ playList: [] }));

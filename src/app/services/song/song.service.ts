@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-16 17:29:46
+ * @LastEditTime: 2020-03-18 04:08:40
  */
 import { Injectable, Inject } from '@angular/core';
 import { ServicesModule, API_URL } from '../services.module';
@@ -37,7 +37,7 @@ export class SongService {
     private generateSongList(songs: Song[], songUrls: SongUrl[]): Song[] {
         const result = [];
         songs.forEach(song => {
-            const url = songUrls.find(url => url.id === song.id).url;
+            const url = songUrls.find(songUrl => songUrl.id === song.id).url;
             if (url) {
                 result.push({ ...song, url });
             }
@@ -45,6 +45,15 @@ export class SongService {
         return result;
     }
 
+    // 歌曲详情
+    getSongDetail(ids: string): Observable<Song> {
+        const params = new HttpParams().set('ids', ids);
+        return this.http
+            .get(this.url + 'song/detail', { params })
+            .pipe(map((res: { songs: Song }) => res.songs[0]));
+    }
+
+    // 获取歌词
     getSongLyric(id: number): Observable<Lyric> {
         const params = new HttpParams().set('id', id.toString());
         return this.http.get(this.url + 'lyric', { params }).pipe(

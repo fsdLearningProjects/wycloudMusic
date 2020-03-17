@@ -1,7 +1,7 @@
 <!--
  * @Date: 2020-03-16 17:58:56
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-17 02:43:39
+ * @LastEditTime: 2020-03-18 03:56:58
  -->
 <div class="sheet-info wrap feature-wrap">
     <div class="g-wrap6">
@@ -53,7 +53,12 @@
 
                     <div class="btns">
                         <nz-button-group class="btn">
-                            <button class="play" nz-button nzType="primary">
+                            <button
+                                class="play"
+                                nz-button
+                                nzType="primary"
+                                (click)="onAddSheet(sheetDetail.tracks, true)"
+                            >
                                 <i
                                     nz-icon
                                     nzType="play-circle"
@@ -61,7 +66,12 @@
                                 ></i
                                 >播放
                             </button>
-                            <button class="add" nz-button nzType="primary">
+                            <button
+                                class="add"
+                                nz-button
+                                nzType="primary"
+                                (click)="onAddSheet(sheetDetail.tracks)"
+                            >
                                 +
                             </button>
                         </nz-button-group>
@@ -109,6 +119,79 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="wy-sec">
+            <div class="u-title wy-sec-wrap clearfix">
+                <h3 class="wy-sec-title" style="margin-right: 3px;">
+                    <span class="f-ff2">歌曲列表</span>
+                </h3>
+                <span class="sub-s-fc3"
+                    >{{ sheetDetail.tracks.length }} 首歌</span
+                >
+                <div class="more s-fc3">
+                    播放
+                    <strong class="s-fc6">{{ sheetDetail.playCount }}</strong>
+                    次
+                </div>
+            </div>
+            <nz-table
+                class="wy-table"
+                #basicTable
+                [nzData]="sheetDetail.tracks"
+                [nzFrontPagination]="false"
+                nzBordered
+                nzNotResult="暂无音乐！"
+            >
+                <thead>
+                    <tr>
+                        <th nzWidth="80px"></th>
+                        <th>标题</th>
+                        <th nzWidth="120px">时长</th>
+                        <th nzWidth="80px">歌手</th>
+                        <th>专辑</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of basicTable.data; index as i">
+                        <td class="first-col">
+                            <span>{{ i + 1 }}</span>
+                            <i
+                                class="ico play-song"
+                                title="播放"
+                                [class.current]="currentSong?.id === item.id"
+                                (click)="onAddSong(item, true)"
+                            ></i>
+                        </td>
+                        <td class="song-name">
+                            <a [routerLink]="['/songDetail', item.id]">{{
+                                item.name
+                            }}</a>
+                        </td>
+                        <td class="time-col">
+                            <span>{{ item.dt / 1000 | formatTime }}</span>
+                            <p class="icons">
+                                <i
+                                    class="ico add"
+                                    title="添加"
+                                    (click)="onAddSong(item)"
+                                ></i>
+                                <i class="ico like" title="收藏"></i>
+                                <i class="ico share" title="分享"></i>
+                            </p>
+                        </td>
+                        <td>
+                            <ng-container
+                                *ngFor="let singer of item.ar; last as isLast"
+                            >
+                                <a>{{ singer.name }}</a>
+                                <em [hidden]="isLast">/</em>
+                            </ng-container>
+                        </td>
+                        <td>{{ item.al.name }}</td>
+                    </tr>
+                </tbody>
+            </nz-table>
         </div>
     </div>
 </div>

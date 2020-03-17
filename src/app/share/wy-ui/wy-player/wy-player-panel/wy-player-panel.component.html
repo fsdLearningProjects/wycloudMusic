@@ -1,7 +1,15 @@
+<!--
+ * @Date: 2020-03-13 19:46:21
+ * @LastEditors: fashandian
+ * @LastEditTime: 2020-03-17 21:01:56
+ -->
 <div class="play-panel" [class.show]="show">
     <div class="hd">
         <div class="hdc">
-            <h4>播放列表（<span>{{ songList.length }}</span>）</h4>
+            <h4>
+                播放列表（<span>{{ songList.length }}</span
+                >）
+            </h4>
             <div class="add-all">
                 <i class="icon" title="收藏全部"></i>收藏全部
             </div>
@@ -15,13 +23,21 @@
     </div>
 
     <div class="bd">
-        <img src="//music.163.com/api/img/blur/109951163826278397" alt="" class="imgbg">
+        <img
+            src="//music.163.com/api/img/blur/109951163826278397"
+            alt=""
+            class="imgbg"
+        />
         <div class="msk"></div>
-        <app-wy-scroll class="list-wrap" [data]="songList" (onScrollEnd)="scrollY = $event">
+        <app-wy-scroll
+            class="list-wrap"
+            [data]="songList"
+            (onScrollEnd)="scrollY = $event"
+        >
             <ul>
                 <li
                     *ngFor="let item of songList; index as i"
-                    [class.current]="currentIndex === i"
+                    [class.current]="currentSong?.id === item.id"
                     (click)="onChangeSong.emit(item)"
                 >
                     <i class="col arrow"></i>
@@ -29,23 +45,36 @@
                     <div class="col icons">
                         <i class="ico like" title="收藏"></i>
                         <i class="ico share" title="分享"></i>
-                        <i class="ico trush" title="删除" (click)="onDeleteSong.emit(item)"></i>
+                        <i
+                            class="ico trush"
+                            title="删除"
+                            (click)="onDeleteSong.emit(item)"
+                        ></i>
                     </div>
                     <div class="singers clearfix ellipsis">
-                        <div class="singer-item" *ngFor="let singer of item.ar; last as isLast">
+                        <div
+                            class="singer-item"
+                            *ngFor="let singer of item.ar; last as isLast"
+                        >
                             <a class="col ellipsis">{{ singer?.name }}</a>
                             <span [hidden]="isLast">/</span>
                         </div>
                     </div>
-                    <div class="col duration">{{ (item?.dt / 1000) | formatTime }}</div>
+                    <div class="col duration">
+                        {{ item?.dt / 1000 | formatTime }}
+                    </div>
                     <div class="col link"></div>
                 </li>
             </ul>
         </app-wy-scroll>
         <app-wy-scroll class="list-lyric" [data]="currentLyric">
             <ul>
-                <li *ngFor="let item of currentLyric; index as i" [class.current]="currentLyricNum === i">
-                    {{ item.lyric }} <br> {{ item.tlyric }}
+                <li
+                    *ngFor="let item of currentLyric; index as i"
+                    [class.current]="currentLyricNum === i"
+                >
+                    {{ item.lyric }} <br />
+                    {{ item.tlyric }}
                 </li>
             </ul>
         </app-wy-scroll>
