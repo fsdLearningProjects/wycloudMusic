@@ -35,6 +35,8 @@ export class WyPlayerPanelComponent implements OnInit, OnChanges {
     @Output() onDeleteSong = new EventEmitter<Song>();
     // tslint:disable-next-line: no-output-on-prefix
     @Output() onClearSong = new EventEmitter<void>();
+    // tslint:disable-next-line: no-output-on-prefix
+    @Output() onGoPage = new EventEmitter<[string, number]>();
 
     @ViewChildren(WyScrollComponent) private wyScroll: QueryList<
         WyScrollComponent
@@ -190,5 +192,10 @@ export class WyPlayerPanelComponent implements OnInit, OnChanges {
                 false
             );
         }
+    }
+
+    goPage(path: [string, number], event: Event) {
+        event.stopPropagation();
+        this.onGoPage.emit(path);
     }
 }

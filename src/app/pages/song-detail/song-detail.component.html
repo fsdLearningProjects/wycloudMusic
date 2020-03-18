@@ -1,7 +1,7 @@
 <!--
  * @Date: 2020-03-18 02:49:01
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-18 04:43:49
+ * @LastEditTime: 2020-03-18 18:27:32
  -->
 <div class="song-info wrap feature-wrap">
     <div class="g-wrap6">
@@ -29,13 +29,9 @@
                                         last as isLast
                                     "
                                 >
-                                    <a
-                                        [href]="
-                                            '//music.163.com/artist?id=' +
-                                            singer?.id
-                                        "
-                                        >{{ singer?.name }}</a
-                                    >
+                                    <a [routerLink]="['/singer', singer?.id]">{{
+                                        singer?.name
+                                    }}</a>
                                     <em [hidden]="isLast">/</em>
                                 </li>
                             </ul>

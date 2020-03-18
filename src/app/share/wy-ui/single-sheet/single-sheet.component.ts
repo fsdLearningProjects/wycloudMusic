@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-16 16:52:14
+ * @LastEditTime: 2020-03-18 18:22:42
  */
 import {
     Component,
@@ -27,7 +27,8 @@ export class SingleSheetComponent implements OnInit {
 
     ngOnInit(): void {}
 
-    playSheet(id: number): void {
+    playSheet(id: number, event: Event): void {
+        event.stopPropagation();
         this.onPlay.emit(id);
     }
 

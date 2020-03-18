@@ -29,6 +29,7 @@ import { shuffle, findIndex } from 'src/app/utils/array';
 import { WyPlayerPanelComponent } from './wy-player-panel/wy-player-panel.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { BatchActionsService } from 'src/app/store/batch-actions/batch-actions.service';
+import { Router } from '@angular/router';
 
 interface PlayerSelectorState {
     type: (playState: PlayState) => Song[] | number | PlayMode | Song;
@@ -101,7 +102,8 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
         private store$: Store<AppStoreModule>,
         @Inject(DOCUMENT) private document: Document,
         private nzModalService: NzModalService,
-        private batchActionsService: BatchActionsService
+        private batchActionsService: BatchActionsService,
+        private router: Router
     ) {
         const appStore$ = this.store$.pipe(
             select(createFeatureSelector<AppStoreModule>('player'))
@@ -377,5 +379,12 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
                 this.batchActionsService.clearSong();
             }
         });
+    }
+
+    // 跳转
+    goPage(path: [string, number]) {
+        this.showListPanel = false;
+        this.showVolumePanel = false;
+        this.router.navigate(path);
     }
 }

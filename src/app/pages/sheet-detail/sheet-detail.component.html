@@ -1,7 +1,7 @@
 <!--
  * @Date: 2020-03-16 17:58:56
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-18 03:56:58
+ * @LastEditTime: 2020-03-18 19:21:20
  -->
 <div class="sheet-info wrap feature-wrap">
     <div class="g-wrap6">
@@ -184,7 +184,9 @@
                             <ng-container
                                 *ngFor="let singer of item.ar; last as isLast"
                             >
-                                <a>{{ singer.name }}</a>
+                                <a [routerLink]="['/singer', singer.id]">
+                                    {{ singer.name }}
+                                </a>
                                 <em [hidden]="isLast">/</em>
                             </ng-container>
                         </td>

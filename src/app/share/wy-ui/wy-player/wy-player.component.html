@@ -1,7 +1,7 @@
 <!--
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-16 01:54:32
+ * @LastEditTime: 2020-03-18 18:53:15
  -->
 <div
     class="m-player"
@@ -25,19 +25,32 @@
                 <i class="next" (click)="onNext(currentIndex + 1)"></i>
             </div>
             <div class="head">
-                <img [src]="picUrl" [alt]="" />
-                <i class="mask"></i>
+                <img [src]="picUrl" [alt]="currentSong?.name" />
+                <i
+                    class="mask"
+                    (click)="
+                        currentSong && goPage(['/songDetail', currentSong?.id])
+                    "
+                ></i>
             </div>
             <div class="play">
                 <div class="words clearfix">
-                    <p class="ellipsis margin-bottom-none">
+                    <p
+                        class="ellipsis margin-bottom-none"
+                        (click)="
+                            currentSong &&
+                                goPage(['/songDetail', currentSong?.id])
+                        "
+                    >
                         {{ currentSong?.name }}
                     </p>
                     <ul class="songs clearfix margin-bottom-none">
                         <li
                             *ngFor="let item of currentSong?.ar; last as isLast"
                         >
-                            <a>{{ item.name }}</a>
+                            <a (click)="goPage(['/singer', item?.id])"
+                                >{{ item.name }}
+                            </a>
                             <span [hidden]="isLast">/</span>
                         </li>
                     </ul>
@@ -87,6 +100,7 @@
                 (onChangeSong)="onChangeSong($event)"
                 (onDeleteSong)="onDeleteSong($event)"
                 (onClearSong)="onClearSong()"
+                (onGoPage)="goPage($event)"
             ></app-wy-player-panel>
         </div>
     </div>

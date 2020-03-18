@@ -1,3 +1,8 @@
+/*
+ * @Date: 2020-03-13 19:46:21
+ * @LastEditors: fashandian
+ * @LastEditTime: 2020-03-18 17:32:46
+ */
 export interface Banner {
     targetId: number;
     url: string;
@@ -14,8 +19,14 @@ export interface HotTag {
 export interface Singer {
     id: number;
     name: string;
+    alias: string[];
     picUrl: string;
     albumSize: number;
+}
+
+export interface SingerDetail {
+    artist: Singer;
+    hotSongs: Song[];
 }
 
 // 歌曲

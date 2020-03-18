@@ -1,7 +1,7 @@
 <!--
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-17 21:01:56
+ * @LastEditTime: 2020-03-18 19:16:18
  -->
 <div class="play-panel" [class.show]="show">
     <div class="hd">
@@ -56,14 +56,23 @@
                             class="singer-item"
                             *ngFor="let singer of item.ar; last as isLast"
                         >
-                            <a class="col ellipsis">{{ singer?.name }}</a>
+                            <a
+                                class="col ellipsis"
+                                (click)="
+                                    goPage(['/singer', singer?.id], $event)
+                                "
+                                >{{ singer?.name }}</a
+                            >
                             <span [hidden]="isLast">/</span>
                         </div>
                     </div>
                     <div class="col duration">
                         {{ item?.dt / 1000 | formatTime }}
                     </div>
-                    <div class="col link"></div>
+                    <div
+                        class="col link"
+                        (click)="goPage(['/songDetail', item?.id], $event)"
+                    ></div>
                 </li>
             </ul>
         </app-wy-scroll>
