@@ -1,12 +1,19 @@
 <!--
  * @Date: 2020-03-19 18:38:49
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-19 19:08:03
+ * @LastEditTime: 2020-03-20 05:20:48
  -->
 <ng-template #defaultView>
-    <div class="search">
+    <div class="search" #search>
         <nz-input-group nzSuffixIcon="search">
-            <input type="text" nz-input placeholder="歌单 / 歌手 / 歌曲" />
+            <input
+                type="text"
+                #nzInput
+                nz-input
+                placeholder="歌单 / 歌手 / 歌曲"
+                (focus)="onFocus()"
+                style="z-index: 1001;"
+            />
         </nz-input-group>
     </div>
 </ng-template>

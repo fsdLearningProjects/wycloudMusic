@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-18 17:32:46
+ * @LastEditTime: 2020-03-20 02:09:16
  */
 export interface Banner {
     targetId: number;
@@ -89,4 +89,10 @@ export interface Lyric {
 export interface SheetList {
     playlists: SongSheet[];
     total: number;
+}
+
+export interface Search {
+    artists?: Singer[];
+    playlists?: SongSheet[];
+    songs?: Song[];
 }
