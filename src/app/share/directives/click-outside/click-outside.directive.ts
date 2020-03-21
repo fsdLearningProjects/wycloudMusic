@@ -21,7 +21,7 @@ import { DOCUMENT } from '@angular/common';
 })
 export class ClickOutsideDirective implements OnChanges {
     @Input() bindFlag = false;
-    @Output() clickOutside = new EventEmitter<void>();
+    @Output() clickOutside = new EventEmitter<HTMLElement>();
 
     private handleClick: () => void; // 参见randerer2的listen方法声明
 
@@ -38,11 +38,12 @@ export class ClickOutsideDirective implements OnChanges {
                     this.document,
                     'click',
                     (event: Event) => {
+                        const target = event.target;
                         const isContain = this.element.nativeElement.contains(
-                            event.target
+                            target
                         );
                         if (!isContain) {
-                            this.clickOutside.emit();
+                            this.clickOutside.emit(target as HTMLElement);
                         }
                     }
                 );

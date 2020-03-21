@@ -208,16 +208,14 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
         }
     }
 
+    // 这个 watchCurrentSong 方法在当前歌曲的索引 currentIndex 发生变化时会调用
     private watchCurrentSong(song: Song) {
-        // 因为默认一开始音乐列表是没有音乐的，所以要做个判断，避免报错
+        // 当前歌曲不存在时，song 为 undefined，会触发 audio 的 error 事件
+        this.currentSong = song;
         if (song) {
-            this.currentSong = song;
+            // 因为默认一开始音乐列表是没有音乐的，所以要做个判断，避免报错
             // 毫秒转化为秒
             this.duration = song.dt / 1000;
-        } else {
-            // 如果当前歌曲不存在。则设置为 null
-            // 这个 watchCurrentSong 方法在当前歌曲的索引 currentIndex 发生变化时会调用
-            this.currentSong = null;
         }
     }
 
@@ -271,10 +269,12 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
     }
 
     // 点击播放面板外面后触发
-    onClickOutside() {
-        this.showVolumePanel = false;
-        this.showListPanel = false;
-        this.bindFlag = false;
+    onClickOutside(target: HTMLElement) {
+        if (target.dataset.action !== 'delete') {
+            this.showVolumePanel = false;
+            this.showListPanel = false;
+            this.bindFlag = false;
+        }
     }
 
     // 控制音量
@@ -365,24 +365,11 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
         }
     }
 
-    // 结束播放，结束播放是通过暂停歌曲以及重置歌曲播放时间以及缓冲条来实现
-    onStop() {
-        // 如果当前时正在播放，则暂停
-        if (this.playing) {
-            this.onToggle();
-        }
-        // 重置当前歌曲的索引
-        this.currentIndex = -1;
-        // 重置当前播放时间为 0
-        this.audio.currentTime = 0;
-        // 重置缓冲条
+    // 当前歌曲不存在时。会触发 audio 的 error 事件，然后重置信息
+    onError() {
+        this.playing = false;
         this.bufferPercent = 0;
-        // 重置总时长
         this.duration = 0;
-        // 更新当前歌曲的索引，根据 player.selector.ts，由于 currentSong 的值来自 playList 和 currentIndex，这样 currentIndex 也会变化
-        this.store$.dispatch(
-            SetCurrentIndex({ currentIndex: this.currentIndex })
-        );
     }
 
     // 单曲循环
@@ -441,8 +428,6 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
         this.nzModalService.confirm({
             nzTitle: '确认清空列表?',
             nzOnOk: () => {
-                // 结束当前播放歌曲
-                this.onStop();
                 // 清空歌曲
                 this.batchActionsService.clearSong();
             }
