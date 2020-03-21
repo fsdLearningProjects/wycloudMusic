@@ -1,7 +1,7 @@
 <!--
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-21 17:28:14
+ * @LastEditTime: 2020-03-21 17:28:58
  -->
 
 # WycloudMusic
@@ -14,4 +14,4 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`.
 
 ## Api
 
-Api in [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi) repository, clone and run `npm install`, and then `npm start` to start server
+Api in [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi) repository, clone and run `npm install`, and then run `npm start` to start server
