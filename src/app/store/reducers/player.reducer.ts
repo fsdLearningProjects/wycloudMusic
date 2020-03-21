@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-17 16:42:02
+ * @LastEditTime: 2020-03-21 17:00:19
  */
 import { PlayMode } from 'src/app/share/wy-ui/wy-player/player-types';
 import { Song } from 'src/app/services/data-types/common.types';
@@ -11,8 +11,17 @@ import {
     SetPlayList,
     SetSongList,
     SetPlayMode,
-    SetCurrentIndex
+    SetCurrentIndex,
+    SetCurrentAction
 } from '../actions/player.action';
+
+export enum CurrentActions {
+    Add,
+    Play,
+    Delete,
+    Clear,
+    Other
+}
 
 export interface PlayState {
     /** 播放状态 */
@@ -25,6 +34,8 @@ export interface PlayState {
     playList: Song[];
     /** 当前正在播放的索引 */
     currentIndex: number;
+    /** 当前操作 */
+    currentAction: CurrentActions;
 }
 
 export const initialState: PlayState = {
@@ -35,7 +46,8 @@ export const initialState: PlayState = {
     },
     songList: [],
     playList: [],
-    currentIndex: -1
+    currentIndex: -1,
+    currentAction: CurrentActions.Other
 };
 
 const reducer = createReducer(
@@ -47,6 +59,10 @@ const reducer = createReducer(
     on(SetCurrentIndex, (state, { currentIndex }) => ({
         ...state,
         currentIndex
+    })),
+    on(SetCurrentAction, (state, { currentAction }) => ({
+        ...state,
+        currentAction
     }))
 );
 

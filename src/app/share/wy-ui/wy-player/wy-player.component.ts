@@ -13,27 +13,45 @@ import {
     getPlayList,
     getCurrentIndex,
     getPlayMode,
-    getCurrentSong
+    getCurrentSong,
+    getCurrentAction
 } from 'src/app/store/selectors/player.selector';
-import { PlayState } from 'src/app/store/reducers/player.reducer';
+import {
+    PlayState,
+    CurrentActions
+} from 'src/app/store/reducers/player.reducer';
 import { Song } from 'src/app/services/data-types/common.types';
 import { PlayMode } from './player-types';
 import {
     SetCurrentIndex,
     SetPlayMode,
-    SetPlayList
+    SetPlayList,
+    SetCurrentAction
 } from 'src/app/store/actions/player.action';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
 import { shuffle, findIndex } from 'src/app/utils/array';
 import { WyPlayerPanelComponent } from './wy-player-panel/wy-player-panel.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { BatchActionsService } from 'src/app/store/batch-actions/batch-actions.service';
 import { Router } from '@angular/router';
+import {
+    state,
+    transition,
+    trigger,
+    style,
+    animate,
+    AnimationEvent
+} from '@angular/animations';
 
 interface PlayerSelectorState {
     type: (playState: PlayState) => Song[] | number | PlayMode | Song;
     cb: (item: Song[] | number | PlayMode | Song) => void;
+}
+
+enum tooltipTitle {
+    Add = '已添加到列表！',
+    Play = '已开始播放！'
 }
 
 const MODE_PLAY: PlayMode[] = [
@@ -54,7 +72,15 @@ const MODE_PLAY: PlayMode[] = [
 @Component({
     selector: 'app-wy-player',
     templateUrl: './wy-player.component.html',
-    styleUrls: ['./wy-player.component.less']
+    styleUrls: ['./wy-player.component.less'],
+    animations: [
+        trigger('showHide', [
+            state('show', style({ bottom: 0 })),
+            state('hide', style({ bottom: -71 })),
+            transition('show=>hide', [animate('0.3s')]),
+            transition('hide=>show', [animate('0.1s')])
+        ])
+    ]
 })
 export class WyPlayerComponent implements OnInit, AfterViewInit {
     @ViewChild('audioElement', { static: true })
@@ -97,6 +123,17 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
     currentMode: PlayMode;
     // 点击模式图标的次数
     modeCount = 0;
+    // 控制播放器的显示隐藏
+    showPlayer = 'hide';
+    // 是否锁住播放器，不让它隐藏掉
+    isLocked = false;
+    // 是否正在进行动画中
+    isAnimating = false;
+    // 控制 tooltip
+    controlTooltip = {
+        title: '',
+        isShow: false
+    };
 
     constructor(
         private store$: Store<AppStoreModule>,
@@ -129,6 +166,11 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
             {
                 type: getCurrentSong,
                 cb: (song: Song) => this.watchCurrentSong(song)
+            },
+            {
+                type: getCurrentAction,
+                cb: (currentAction: CurrentActions) =>
+                    this.watchCurrentAction(currentAction)
             }
         ];
 
@@ -177,6 +219,32 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
             // 这个 watchCurrentSong 方法在当前歌曲的索引 currentIndex 发生变化时会调用
             this.currentSong = null;
         }
+    }
+
+    private watchCurrentAction(currentAction: CurrentActions) {
+        const title = tooltipTitle[CurrentActions[currentAction]];
+        if (title) {
+            this.controlTooltip.title = title;
+            // 需要等播放器显示出来，且在动画完成后才能显示 tooltip
+            if (this.showPlayer === 'hide') {
+                this.togglePlayer('show');
+            } else {
+                this.showTooltip();
+            }
+        }
+        this.store$.dispatch(
+            SetCurrentAction({ currentAction: CurrentActions.Other })
+        );
+    }
+
+    private showTooltip() {
+        this.controlTooltip.isShow = true;
+        timer(1500).subscribe(() => {
+            this.controlTooltip = {
+                title: '',
+                isShow: false
+            };
+        });
     }
 
     // 更新当前播放歌曲的下标
@@ -386,5 +454,19 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
         this.showListPanel = false;
         this.showVolumePanel = false;
         this.router.navigate(path);
+    }
+
+    togglePlayer(type: string) {
+        if (!this.isLocked && !this.isAnimating) {
+            this.showPlayer = type;
+        }
+    }
+
+    onAnimationEnd(event: AnimationEvent) {
+        this.isAnimating = false;
+        // 如果动画从 hide => show
+        if (event.toState === 'show' && this.controlTooltip.title) {
+            this.showTooltip();
+        }
     }
 }

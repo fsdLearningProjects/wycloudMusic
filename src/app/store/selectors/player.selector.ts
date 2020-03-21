@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-17 16:44:03
+ * @LastEditTime: 2020-03-21 16:45:52
  */
 import { PlayState } from '../reducers/player.reducer';
 import { createSelector, createFeatureSelector } from '@ngrx/store';
@@ -33,6 +33,11 @@ export const getCurrentIndex = createSelector(
 export const getCurrentSong = createSelector(
     selectPlayerStates,
     ({ playList, currentIndex }: PlayState) => playList[currentIndex]
+);
+
+export const getCurrentAction = createSelector(
+    selectPlayerStates,
+    (state: PlayState) => state.currentAction
 );
 
 export const getPlayer = createFeatureSelector<AppStoreModule>('player');

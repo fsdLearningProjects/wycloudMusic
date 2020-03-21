@@ -1,16 +1,21 @@
 <!--
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-18 18:53:15
+ * @LastEditTime: 2020-03-21 17:01:41
  -->
 <div
     class="m-player"
+    [@showHide]="showPlayer"
     appClickOutside
     [bindFlag]="bindFlag"
     (clickOutside)="onClickOutside()"
+    (mouseenter)="togglePlayer('show')"
+    (mouseleave)="togglePlayer('hide')"
+    (@showHide.start)="isAnimating = true"
+    (@showHide.done)="onAnimationEnd($event)"
 >
-    <div class="lock">
-        <div class="left"><i></i></div>
+    <div class="lock" (click)="isLocked = !isLocked">
+        <div class="left"><i [class.locked]="isLocked"></i></div>
     </div>
     <div class="hand"></div>
     <div class="container">
@@ -80,7 +85,14 @@
                     [title]="currentMode.label"
                     (click)="changeMode()"
                 ></i>
-                <p class="open" (click)="toggleListPanel()">
+                <p
+                    nz-tooltip
+                    [nzTooltipTitle]="controlTooltip.title"
+                    [nzVisible]="controlTooltip.isShow"
+                    nzOverlayClassName="tip-bg"
+                    class="open"
+                    (click)="toggleListPanel()"
+                >
                     <span></span>
                 </p>
                 <div class="control-vol" [hidden]="!showVolumePanel">

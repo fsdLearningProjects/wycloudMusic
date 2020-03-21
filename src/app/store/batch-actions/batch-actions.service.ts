@@ -1,18 +1,19 @@
 /*
  * @Date: 2020-03-14 22:16:09
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-17 20:00:28
+ * @LastEditTime: 2020-03-21 17:24:04
  */
 import { Injectable } from '@angular/core';
 import { AppStoreModule } from '../app-store.module';
 import { Song } from 'src/app/services/data-types/common.types';
 import { createFeatureSelector, select, Store } from '@ngrx/store';
-import { PlayState } from '../reducers/player.reducer';
+import { PlayState, CurrentActions } from '../reducers/player.reducer';
 import {
     SetSongList,
     SetPlayList,
     SetCurrentIndex,
-    SetPlaying
+    SetPlaying,
+    SetCurrentAction
 } from '../actions/player.action';
 import { shuffle, findIndex } from 'src/app/utils/array';
 
@@ -42,6 +43,9 @@ export class BatchActionsService {
 
         this.store$.dispatch(SetPlayList({ playList }));
         this.store$.dispatch(SetCurrentIndex({ currentIndex: playIndex }));
+        this.store$.dispatch(
+            SetCurrentAction({ currentAction: CurrentActions.Play })
+        );
     }
 
     addSheet(songs: Song[]) {
@@ -56,6 +60,9 @@ export class BatchActionsService {
         });
         this.store$.dispatch(SetSongList({ songList }));
         this.store$.dispatch(SetPlayList({ playList }));
+        this.store$.dispatch(
+            SetCurrentAction({ currentAction: CurrentActions.Add })
+        );
     }
 
     // 添加歌曲
@@ -79,8 +86,18 @@ export class BatchActionsService {
             this.store$.dispatch(SetPlayList({ playList }));
         }
 
+        // 添加的歌曲索引是否等于当前播放的歌曲
         if (index !== this.playState.currentIndex) {
+            // 不等于，意味着被修改过，也就是意外着 isPlay 为 true，需要播放
             this.store$.dispatch(SetCurrentIndex({ currentIndex: index }));
+            this.store$.dispatch(
+                SetCurrentAction({ currentAction: CurrentActions.Play })
+            );
+        } else {
+            // 等于，意味着没有被修改过，也即是不需要播放
+            this.store$.dispatch(
+                SetCurrentAction({ currentAction: CurrentActions.Add })
+            );
         }
     }
 
@@ -102,6 +119,9 @@ export class BatchActionsService {
         this.store$.dispatch(SetSongList({ songList }));
         this.store$.dispatch(SetPlayList({ playList }));
         this.store$.dispatch(SetCurrentIndex({ currentIndex }));
+        this.store$.dispatch(
+            SetCurrentAction({ currentAction: CurrentActions.Delete })
+        );
     }
 
     // 清空歌曲
@@ -109,5 +129,8 @@ export class BatchActionsService {
         this.store$.dispatch(SetSongList({ songList: [] }));
         this.store$.dispatch(SetPlayList({ playList: [] }));
         this.store$.dispatch(SetCurrentIndex({ currentIndex: -1 }));
+        this.store$.dispatch(
+            SetCurrentAction({ currentAction: CurrentActions.Clear })
+        );
     }
 }

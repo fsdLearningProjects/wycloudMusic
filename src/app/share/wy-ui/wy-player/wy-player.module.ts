@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-16 01:52:19
+ * @LastEditTime: 2020-03-21 16:57:10
  */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -12,6 +12,7 @@ import { FormatTimePipe } from '../../pipes/format-time/format-time.pipe';
 import { WyPlayerPanelComponent } from './wy-player-panel/wy-player-panel.component';
 import { WyScrollComponent } from './wy-scroll/wy-scroll.component';
 import { ClickOutsideDirective } from 'src/app/share/directives/click-outside/click-outside.directive';
+import { NzToolTipModule } from 'ng-zorro-antd';
 
 @NgModule({
     declarations: [
@@ -21,7 +22,7 @@ import { ClickOutsideDirective } from 'src/app/share/directives/click-outside/cl
         WyScrollComponent,
         ClickOutsideDirective
     ],
-    imports: [CommonModule, FormsModule, WySliderModule],
+    imports: [CommonModule, FormsModule, WySliderModule, NzToolTipModule],
     exports: [WyPlayerComponent, FormatTimePipe, ClickOutsideDirective]
 })
 export class WyPlayerModule {}
