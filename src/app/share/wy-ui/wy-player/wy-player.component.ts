@@ -4,7 +4,7 @@ import {
     ViewChild,
     ElementRef,
     AfterViewInit,
-    Inject
+    Inject,
 } from '@angular/core';
 import { Store, select, createFeatureSelector } from '@ngrx/store';
 import { AppStoreModule } from 'src/app/store/app-store.module';
@@ -14,11 +14,11 @@ import {
     getCurrentIndex,
     getPlayMode,
     getCurrentSong,
-    getCurrentAction
+    getCurrentAction,
 } from 'src/app/store/selectors/player.selector';
 import {
     PlayState,
-    CurrentActions
+    CurrentActions,
 } from 'src/app/store/reducers/player.reducer';
 import { Song } from 'src/app/services/data-types/common.types';
 import { PlayMode } from './player-types';
@@ -26,14 +26,14 @@ import {
     SetCurrentIndex,
     SetPlayMode,
     SetPlayList,
-    SetCurrentAction
+    SetCurrentAction,
 } from 'src/app/store/actions/player.action';
 import { Subscription, timer } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
 import { shuffle, findIndex } from 'src/app/utils/array';
 import { WyPlayerPanelComponent } from './wy-player-panel/wy-player-panel.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { BatchActionsService } from 'src/app/store/batch-actions/batch-actions.service';
+import { PlayerBatchActionsService } from 'src/app/store/batch-actions/player-batch-actions/player-batch-actions.service';
 import { Router } from '@angular/router';
 import {
     state,
@@ -41,7 +41,7 @@ import {
     trigger,
     style,
     animate,
-    AnimationEvent
+    AnimationEvent,
 } from '@angular/animations';
 
 interface PlayerSelectorState {
@@ -51,22 +51,22 @@ interface PlayerSelectorState {
 
 enum tooltipTitle {
     Add = '已添加到列表！',
-    Play = '已开始播放！'
+    Play = '已开始播放！',
 }
 
 const MODE_PLAY: PlayMode[] = [
     {
         type: 'loop',
-        label: '循环'
+        label: '循环',
     },
     {
         type: 'random',
-        label: '随机'
+        label: '随机',
     },
     {
         type: 'singleLoop',
-        label: '单曲循环'
-    }
+        label: '单曲循环',
+    },
 ];
 
 @Component({
@@ -78,9 +78,9 @@ const MODE_PLAY: PlayMode[] = [
             state('show', style({ bottom: 0 })),
             state('hide', style({ bottom: -71 })),
             transition('show=>hide', [animate('0.3s')]),
-            transition('hide=>show', [animate('0.1s')])
-        ])
-    ]
+            transition('hide=>show', [animate('0.1s')]),
+        ]),
+    ],
 })
 export class WyPlayerComponent implements OnInit, AfterViewInit {
     @ViewChild('audioElement', { static: true })
@@ -132,14 +132,14 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
     // 控制 tooltip
     controlTooltip = {
         title: '',
-        isShow: false
+        isShow: false,
     };
 
     constructor(
         private store$: Store<AppStoreModule>,
         @Inject(DOCUMENT) private document: Document,
         private nzModalService: NzModalService,
-        private batchActionsService: BatchActionsService,
+        private playerBatchActionsService: PlayerBatchActionsService,
         private router: Router
     ) {
         const appStore$ = this.store$.pipe(
@@ -149,32 +149,32 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
         const stateArr: PlayerSelectorState[] = [
             {
                 type: getSongList,
-                cb: (list: Song[]) => this.watchList(list, 'songList')
+                cb: (list: Song[]) => this.watchList(list, 'songList'),
             },
             {
                 type: getPlayList,
-                cb: (list: Song[]) => this.watchList(list, 'playList')
+                cb: (list: Song[]) => this.watchList(list, 'playList'),
             },
             {
                 type: getCurrentIndex,
-                cb: (index: number) => this.watchCurrentIndex(index)
+                cb: (index: number) => this.watchCurrentIndex(index),
             },
             {
                 type: getPlayMode,
-                cb: (mode: PlayMode) => this.watchPlayMode(mode)
+                cb: (mode: PlayMode) => this.watchPlayMode(mode),
             },
             {
                 type: getCurrentSong,
-                cb: (song: Song) => this.watchCurrentSong(song)
+                cb: (song: Song) => this.watchCurrentSong(song),
             },
             {
                 type: getCurrentAction,
                 cb: (currentAction: CurrentActions) =>
-                    this.watchCurrentAction(currentAction)
-            }
+                    this.watchCurrentAction(currentAction),
+            },
         ];
 
-        stateArr.forEach(item => {
+        stateArr.forEach((item) => {
             appStore$.pipe(select(item.type)).subscribe(item.cb);
         });
     }
@@ -240,7 +240,7 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
         timer(1500).subscribe(() => {
             this.controlTooltip = {
                 title: '',
-                isShow: false
+                isShow: false,
             };
         });
     }
@@ -421,7 +421,7 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
     }
 
     onDeleteSong(song: Song) {
-        this.batchActionsService.deleteSong(song);
+        this.playerBatchActionsService.deleteSong(song);
     }
 
     onClearSong() {
@@ -429,8 +429,8 @@ export class WyPlayerComponent implements OnInit, AfterViewInit {
             nzTitle: '确认清空列表?',
             nzOnOk: () => {
                 // 清空歌曲
-                this.batchActionsService.clearSong();
-            }
+                this.playerBatchActionsService.clearSong();
+            },
         });
     }
 

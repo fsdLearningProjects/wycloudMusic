@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-21 16:45:52
+ * @LastEditTime: 2020-05-23 18:16:35
  */
 import { PlayState } from '../reducers/player.reducer';
 import { createSelector, createFeatureSelector } from '@ngrx/store';
@@ -40,4 +40,4 @@ export const getCurrentAction = createSelector(
     (state: PlayState) => state.currentAction
 );
 
-export const getPlayer = createFeatureSelector<AppStoreModule>('player');
+export const getPlayer = createFeatureSelector<PlayState>('player');

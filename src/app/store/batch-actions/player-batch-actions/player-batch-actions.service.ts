@@ -1,32 +1,32 @@
 /*
  * @Date: 2020-03-14 22:16:09
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-21 17:24:04
+ * @LastEditTime: 2020-05-23 18:04:36
  */
 import { Injectable } from '@angular/core';
-import { AppStoreModule } from '../app-store.module';
+import { AppStoreModule } from '../../app-store.module';
 import { Song } from 'src/app/services/data-types/common.types';
 import { createFeatureSelector, select, Store } from '@ngrx/store';
-import { PlayState, CurrentActions } from '../reducers/player.reducer';
+import { PlayState, CurrentActions } from '../../reducers/player.reducer';
 import {
     SetSongList,
     SetPlayList,
     SetCurrentIndex,
     SetPlaying,
-    SetCurrentAction
-} from '../actions/player.action';
+    SetCurrentAction,
+} from '../../actions/player.action';
 import { shuffle, findIndex } from 'src/app/utils/array';
 
 @Injectable({
-    providedIn: AppStoreModule
+    providedIn: AppStoreModule,
 })
-export class BatchActionsService {
+export class PlayerBatchActionsService {
     private playState: PlayState;
 
     constructor(private store$: Store<AppStoreModule>) {
         this.store$
             .pipe(select(createFeatureSelector<PlayState>('player')))
-            .subscribe(res => (this.playState = res));
+            .subscribe((res) => (this.playState = res));
     }
     // 播放列表
     selectPlayList({ res, index }: { res: Song[]; index: number }) {
@@ -51,7 +51,7 @@ export class BatchActionsService {
     addSheet(songs: Song[]) {
         const songList = this.playState.songList.slice();
         const playList = this.playState.playList.slice();
-        songs.forEach(song => {
+        songs.forEach((song) => {
             const playIndex = findIndex(playList, song);
             if (playIndex === -1) {
                 songList.push(song);

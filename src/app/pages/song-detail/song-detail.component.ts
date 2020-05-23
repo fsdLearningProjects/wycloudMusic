@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-18 02:49:01
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-18 04:43:58
+ * @LastEditTime: 2020-05-23 18:08:12
  */
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -9,23 +9,23 @@ import { map, takeUntil } from 'rxjs/internal/operators';
 import { Song } from 'src/app/services/data-types/common.types';
 import {
     WyLyric,
-    LyricAndTimeLine
+    LyricAndTimeLine,
 } from 'src/app/share/wy-ui/wy-player/wy-player-panel/wy-lyric';
 import { SongService } from 'src/app/services/song/song.service';
-import { BatchActionsService } from 'src/app/store/batch-actions/batch-actions.service';
+import { PlayerBatchActionsService } from 'src/app/store/batch-actions/player-batch-actions/player-batch-actions.service';
 import { NzMessageService } from 'ng-zorro-antd';
 import { AppStoreModule } from 'src/app/store/app-store.module';
 import { Store, select } from '@ngrx/store';
 import {
     getPlayer,
-    getCurrentSong
+    getCurrentSong,
 } from 'src/app/store/selectors/player.selector';
 import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-song-detail',
     templateUrl: './song-detail.component.html',
-    styleUrls: ['./song-detail.component.less']
+    styleUrls: ['./song-detail.component.less'],
 })
 export class SongDetailComponent implements OnInit, OnDestroy {
     song: Song;
@@ -34,7 +34,7 @@ export class SongDetailComponent implements OnInit, OnDestroy {
     controlLyric = {
         isExpand: false,
         label: '展开',
-        iconClass: 'down'
+        iconClass: 'down',
     };
 
     currentSong: Song;
@@ -43,12 +43,12 @@ export class SongDetailComponent implements OnInit, OnDestroy {
     constructor(
         private route: ActivatedRoute,
         private songService: SongService,
-        private batchActionsService: BatchActionsService,
+        private playerBatchActionsService: PlayerBatchActionsService,
         private nzMessageService: NzMessageService,
         private store$: Store<AppStoreModule>
     ) {
         this.route.data
-            .pipe(map(res => res.songDetail))
+            .pipe(map((res) => res.songDetail))
             .subscribe(([song, lyric]) => {
                 this.song = song;
                 this.lyric = new WyLyric(lyric).lines;
@@ -70,7 +70,7 @@ export class SongDetailComponent implements OnInit, OnDestroy {
                 select(getCurrentSong),
                 takeUntil(this.destroy$)
             )
-            .subscribe(song => (this.currentSong = song));
+            .subscribe((song) => (this.currentSong = song));
     }
 
     toggleLyric() {
@@ -86,9 +86,9 @@ export class SongDetailComponent implements OnInit, OnDestroy {
 
     onAddSong(song: Song, isPlay = false) {
         if (!this.currentSong || this.currentSong.id !== song.id) {
-            this.songService.getSongList(song).subscribe(res => {
+            this.songService.getSongList(song).subscribe((res) => {
                 if (res.length) {
-                    this.batchActionsService.addSong(res[0], isPlay);
+                    this.playerBatchActionsService.addSong(res[0], isPlay);
                 } else {
                     this.nzMessageService.create(
                         'warning',

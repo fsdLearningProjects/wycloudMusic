@@ -1,25 +1,26 @@
 /*
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-15 00:32:14
+ * @LastEditTime: 2020-05-23 18:23:01
  */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
     Banner,
     HotTag,
     SongSheet,
-    Singer
+    Singer,
 } from 'src/app/services/data-types/common.types';
 import { NzCarouselComponent } from 'ng-zorro-antd';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs/internal/operators';
 import { SheetService } from 'src/app/services/sheet/sheet.service';
-import { BatchActionsService } from 'src/app/store/batch-actions/batch-actions.service';
+import { PlayerBatchActionsService } from 'src/app/store/batch-actions/player-batch-actions/player-batch-actions.service';
+import { MemberBatchActionsService } from 'src/app/store/batch-actions/member-batch-actions/member-batch-actions.service';
 
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
-    styleUrls: ['./home.component.less']
+    styleUrls: ['./home.component.less'],
 })
 export class HomeComponent implements OnInit {
     @ViewChild(NzCarouselComponent, { static: true })
@@ -35,10 +36,11 @@ export class HomeComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private sheetService: SheetService,
-        private batchActionsService: BatchActionsService
+        private playerBatchActionsService: PlayerBatchActionsService,
+        private memberBatchActionsService: MemberBatchActionsService
     ) {
         this.route.data
-            .pipe(map(res => res.homeDatas))
+            .pipe(map((res) => res.homeDatas))
             .subscribe(([banners, hotTags, songSheetList, singers]) => {
                 this.banners = banners;
                 this.hotTags = hotTags;
@@ -58,12 +60,17 @@ export class HomeComponent implements OnInit {
     }
 
     onPlaySheet(id: number): void {
-        this.sheetService.playSheet(id).subscribe(res => {
-            this.batchActionsService.selectPlayList({ res, index: 0 });
+        this.sheetService.playSheet(id).subscribe((res) => {
+            this.playerBatchActionsService.selectPlayList({ res, index: 0 });
         });
     }
 
     goDetail(id: number) {
         this.router.navigate(['/sheetDetail', id]);
+    }
+
+    // 打开弹窗
+    openModal() {
+        this.memberBatchActionsService.controlModal();
     }
 }

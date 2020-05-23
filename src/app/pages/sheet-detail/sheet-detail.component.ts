@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-16 17:58:56
  * @LastEditors: fashandian
- * @LastEditTime: 2020-03-17 21:15:42
+ * @LastEditTime: 2020-05-23 18:07:41
  */
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -12,27 +12,27 @@ import { Store, select } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import {
     getCurrentSong,
-    getPlayer
+    getPlayer,
 } from 'src/app/store/selectors/player.selector';
 import { SongService } from 'src/app/services/song/song.service';
-import { BatchActionsService } from 'src/app/store/batch-actions/batch-actions.service';
+import { PlayerBatchActionsService } from 'src/app/store/batch-actions/player-batch-actions/player-batch-actions.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
     selector: 'app-sheet-detail',
     templateUrl: './sheet-detail.component.html',
-    styleUrls: ['./sheet-detail.component.less']
+    styleUrls: ['./sheet-detail.component.less'],
 })
 export class SheetDetailComponent implements OnInit, OnDestroy {
     sheetDetail: SongSheet;
     description = {
         short: '',
-        long: ''
+        long: '',
     };
     controlDesc = {
         isExpand: false,
         label: '展开',
-        iconClass: 'down'
+        iconClass: 'down',
     };
 
     currentSong: Song;
@@ -43,10 +43,10 @@ export class SheetDetailComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private store$: Store<AppStoreModule>,
         private songService: SongService,
-        private batchActionsService: BatchActionsService,
+        private playerBatchActionsService: PlayerBatchActionsService,
         private nzMessageService: NzMessageService
     ) {
-        this.route.data.pipe(map(res => res.sheetDetail)).subscribe(res => {
+        this.route.data.pipe(map((res) => res.sheetDetail)).subscribe((res) => {
             this.sheetDetail = res;
             if (res.description) {
                 this.changeDesc(res.description);
@@ -104,9 +104,9 @@ export class SheetDetailComponent implements OnInit, OnDestroy {
     // 播放歌曲
     onAddSong(song: Song, isPlay = false) {
         if (!this.currentSong || this.currentSong.id !== song.id) {
-            this.songService.getSongList(song).subscribe(list => {
+            this.songService.getSongList(song).subscribe((list) => {
                 if (list.length) {
-                    this.batchActionsService.addSong(list[0], isPlay);
+                    this.playerBatchActionsService.addSong(list[0], isPlay);
                 } else {
                     this.nzMessageService.create(
                         'warning',
@@ -119,15 +119,15 @@ export class SheetDetailComponent implements OnInit, OnDestroy {
 
     // 播放歌单
     onAddSheet(songs: Song[], isPlay = false) {
-        this.songService.getSongList(songs).subscribe(list => {
+        this.songService.getSongList(songs).subscribe((list) => {
             if (list.length) {
                 if (isPlay) {
-                    this.batchActionsService.selectPlayList({
+                    this.playerBatchActionsService.selectPlayList({
                         res: list,
-                        index: 0
+                        index: 0,
                     });
                 } else {
-                    this.batchActionsService.addSheet(list);
+                    this.playerBatchActionsService.addSheet(list);
                 }
             } else {
                 this.nzMessageService.create(
