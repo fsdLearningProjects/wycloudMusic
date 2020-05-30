@@ -1,10 +1,16 @@
 <!--
  * @Date: 2020-05-23 16:26:56
  * @LastEditors: fashandian
- * @LastEditTime: 2020-05-23 18:38:25
+ * @LastEditTime: 2020-05-30 22:53:10
 -->
-<div class="m-layer" *ngIf="showModal">
-    <div class="zbar">
+<div
+    class="m-layer"
+    [@showHide]="showModal ? 'show' : 'hide'"
+    #modalContainer
+    cdkDrag
+    cdkDragBoundary=".cdk-overlay-container"
+>
+    <div class="zbar" cdkDragHandle>
         <div class="zttl f-thide">这是标题</div>
     </div>
     <!-- 插槽，也就是内容投影 -->
