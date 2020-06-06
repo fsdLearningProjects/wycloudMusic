@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-05-23 16:26:56
  * @LastEditors: fashandian
- * @LastEditTime: 2020-05-30 22:42:29
+ * @LastEditTime: 2020-06-06 22:22:13
  */
 
 import {
@@ -56,9 +56,9 @@ import {
 })
 export class WyLayerModalComponent implements OnInit, AfterViewInit {
     showModal = false;
+    currentModalType: ModalType;
 
     private visible: boolean;
-    private currentModalType: ModalType;
     private overlayRef: OverlayRef;
     private blockScrollStrategy: BlockScrollStrategy;
     private overlayContainerElement: HTMLElement;
@@ -98,7 +98,10 @@ export class WyLayerModalComponent implements OnInit, AfterViewInit {
     }
 
     hide() {
-        this.memberBatchActionsService.controlModal(false);
+        this.memberBatchActionsService.controlModal(
+            false,
+            this.currentModalType
+        );
     }
 
     private changePointerEvents(type: 'auto' | 'none') {
@@ -147,6 +150,7 @@ export class WyLayerModalComponent implements OnInit, AfterViewInit {
 
     private watchModalType(type: ModalType) {
         this.currentModalType = type;
+        this.changeDetectorRef.markForCheck();
     }
 
     private handleVisibleChange(visible: boolean) {

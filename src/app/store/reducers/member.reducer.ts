@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-05-23 17:13:50
+ * @LastEditTime: 2020-06-06 21:27:24
  */
 import { createReducer, on, Action } from '@ngrx/store';
 import { SetModalVisible, SetModalType } from '../actions/member.action';

@@ -1,9 +1,15 @@
 /*
  * @Date: 2020-05-23 16:37:30
  * @LastEditors: fashandian
- * @LastEditTime: 2020-05-23 16:41:33
+ * @LastEditTime: 2020-06-06 20:19:53
  */
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    ChangeDetectionStrategy,
+    Output,
+    EventEmitter,
+} from '@angular/core';
 
 @Component({
     selector: 'app-wy-layer-default',
@@ -12,6 +18,8 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WyLayerDefaultComponent implements OnInit {
+    @Output() handleChangeModalType = new EventEmitter<string | void>();
+
     constructor() {}
 
     ngOnInit(): void {}

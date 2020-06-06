@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-13 19:46:21
  * @LastEditors: fashandian
- * @LastEditTime: 2020-05-23 18:23:01
+ * @LastEditTime: 2020-06-06 21:03:49
  */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
@@ -16,6 +16,7 @@ import { map } from 'rxjs/internal/operators';
 import { SheetService } from 'src/app/services/sheet/sheet.service';
 import { PlayerBatchActionsService } from 'src/app/store/batch-actions/player-batch-actions/player-batch-actions.service';
 import { MemberBatchActionsService } from 'src/app/store/batch-actions/member-batch-actions/member-batch-actions.service';
+import { ModalType } from 'src/app/store/reducers/member.reducer';
 
 @Component({
     selector: 'app-home',
@@ -71,6 +72,6 @@ export class HomeComponent implements OnInit {
 
     // 打开弹窗
     openModal() {
-        this.memberBatchActionsService.controlModal();
+        this.memberBatchActionsService.controlModal(true, ModalType.Default);
     }
 }

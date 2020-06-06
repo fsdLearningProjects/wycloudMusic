@@ -1,7 +1,7 @@
 <!--
  * @Date: 2020-05-23 16:26:56
  * @LastEditors: fashandian
- * @LastEditTime: 2020-05-30 22:53:10
+ * @LastEditTime: 2020-06-06 22:12:23
 -->
 <div
     class="m-layer"
@@ -14,6 +14,14 @@
         <div class="zttl f-thide">这是标题</div>
     </div>
     <!-- 插槽，也就是内容投影 -->
+    <ng-container [ngSwitch]="currentModalType">
+        <ng-container *ngSwitchCase="'loginByPhone'">
+            <ng-content select="[name=login]"></ng-content>
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+            <ng-content></ng-content>
+        </ng-container>
+    </ng-container>
     <ng-content></ng-content>
     <div class="zcls" title="关闭" (click)="hide()"></div>
 </div>
